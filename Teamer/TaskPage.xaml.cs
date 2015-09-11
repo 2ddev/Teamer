@@ -53,7 +53,30 @@ namespace Teamer
         }
         public void showContent(TeamerTask task)
         {
-            
+            var projectNameTextBlock = FindNameInSubtree<TextBlock>(this, "projectName");
+            var taskTextTextBlock = FindNameInSubtree<TextBlock>(this, "taskText");
+            var taskDescriptionTextBlock = FindNameInSubtree<TextBlock>(this, "taskDescription");
+            var taskTimeTextBlock = FindNameInSubtree<TextBlock>(this, "taskTime");
+            projectNameTextBlock.Text = task.ParentProject.Name;
+            taskTextTextBlock.Text = task.Text;
+            taskDescriptionTextBlock.Text = task.Description;
+            taskTimeTextBlock.Text = task.Start + " -> " + task.Deadline;
+            this.loadingProgressRing.IsActive = false;
+        }
+        public T FindNameInSubtree<T>(FrameworkElement element, string descendantName) where T : FrameworkElement
+        {
+            if (element == null)
+                return null;
+            if (element.Name == descendantName)
+                return element as T;
+            int childrenCount = VisualTreeHelper.GetChildrenCount(element);
+            for (int i = 0; i < childrenCount; i++)
+            {
+                var result = FindNameInSubtree<T>(VisualTreeHelper.GetChild(element, i) as FrameworkElement, descendantName);
+                if (result != null)
+                    return result;
+            }
+            return null;
         }
         public void refreshLoader(bool active)
         {
