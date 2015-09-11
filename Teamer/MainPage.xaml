@@ -1,5 +1,4 @@
-﻿
-<Page
+﻿<Page
     x:Class="Teamer.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,13 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <Page.Resources>
-        <CollectionViewSource x:Name="cvsData"/>
-    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Hub Header="Teamer">
-            <HubSection x:Name="projectsHubSection" Header="Что делать?" PointerEntered="projectsHubSection_PointerEntered">
+            <HubSection x:Name="ProjectsHubSection" Header="Что делать?" PointerEntered="projectsHubSection_PointerEntered">
                 <DataTemplate x:Name="projectsDataTemplate">
                     <ListView x:Name="taskListView">
 

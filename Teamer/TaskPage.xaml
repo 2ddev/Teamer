@@ -8,18 +8,18 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel x:Name="listView" HorizontalAlignment="Center"  VerticalAlignment="Center">
-            <TextBlock Name="projectName" FontSize="32" FontWeight="Bold"/>
-            <TextBlock Name="taskText"/>
-            <TextBlock Name="taskDescription" MaxLines="10" TextReadingOrder="DetectFromContent" TextTrimming="WordEllipsis" TextWrapping="Wrap"/>
-            <TextBlock Name="taskTime" FontSize="13.333" TextWrapping="WrapWholeWords"/>
+        <StackPanel x:Name="ListView" HorizontalAlignment="Center"  VerticalAlignment="Center">
+            <TextBlock Name="ProjectName" FontSize="32" FontWeight="Bold"/>
+            <TextBlock Name="TaskText"/>
+            <TextBlock Name="TaskDescription" MaxLines="10" TextReadingOrder="DetectFromContent" TextTrimming="WordEllipsis" TextWrapping="Wrap"/>
+            <TextBlock Name="TaskTime" FontSize="13.333" TextWrapping="WrapWholeWords"/>
             <GridView TabNavigation="Once" HorizontalAlignment="Center" Visibility="Collapsed">
-                <Button Name="doneButton" Content="Выполнено"></Button>
+                <Button Name="DoneButton" Content="Выполнено"></Button>
                 <Button Content="Кнопка 2"></Button>
                 <Button Content="Кнопка 3"></Button>
             </GridView>
         </StackPanel>
-        <ProgressRing Name="loadingProgressRing" IsActive="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></ProgressRing>
-        <Button x:Name="button" Content="Назад" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="button_Click" Margin="0"/>
+        <ProgressRing Name="LoadingProgressRing" IsActive="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></ProgressRing>
+        <Button x:Name="Button" Content="Назад" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="button_Click" Margin="0"/>
     </Grid>
 </Page>

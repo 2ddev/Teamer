@@ -1,20 +1,11 @@
 ﻿using HtmlAgilityPack;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -25,43 +16,46 @@ namespace Teamer
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class TaskPage : Page
+    public sealed partial class TaskPage
     {
         public TaskPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            this.InitializeComponent();
+            InitializeComponent();
             var parameter = e.Parameter as TeamerTask;
-            updateUI(parameter);
+            UpdateUi(parameter);
             Debug.WriteLine("Whoop");
         }
         
-        public async void updateUI(TeamerTask task)
+        public async void UpdateUi(TeamerTask task)
         {
 
             //refreshLoader(true);
-            TeamerTask result = await loadTaskFromTask(task);
+            TeamerTask result = await LoadTaskFromTask(task);
             if (result != null)
             {
-                showContent(result);
+                ShowContent(result);
 
             }
         }
-        public void showContent(TeamerTask task)
+        public void ShowContent(TeamerTask task)
         {
-            var projectNameTextBlock = FindNameInSubtree<TextBlock>(this, "projectName");
-            var taskTextTextBlock = FindNameInSubtree<TextBlock>(this, "taskText");
-            var taskDescriptionTextBlock = FindNameInSubtree<TextBlock>(this, "taskDescription");
-            var taskTimeTextBlock = FindNameInSubtree<TextBlock>(this, "taskTime");
+            var projectNameTextBlock = FindNameInSubtree<TextBlock>(this, "ProjectName");
+            var taskTextTextBlock = FindNameInSubtree<TextBlock>(this, "TaskText");
+            var taskDescriptionTextBlock = FindNameInSubtree<TextBlock>(this, "TaskDescription");
+            var taskTimeTextBlock = FindNameInSubtree<TextBlock>(this, "TaskTime");
             projectNameTextBlock.Text = task.ParentProject.Name;
             taskTextTextBlock.Text = task.Text;
-            taskDescriptionTextBlock.Text = task.Description;
+            if (task.Description != null)
+            {
+                taskDescriptionTextBlock.Text = task.Description;
+            }
             taskTimeTextBlock.Text = task.Start + " -> " + task.Deadline;
-            this.loadingProgressRing.IsActive = false;
+            LoadingProgressRing.IsActive = false;
         }
         public T FindNameInSubtree<T>(FrameworkElement element, string descendantName) where T : FrameworkElement
         {
@@ -78,33 +72,28 @@ namespace Teamer
             }
             return null;
         }
-        public void refreshLoader(bool active)
+        public void RefreshLoader(bool active)
         {
-            if (active)
-            {
-                this.loadingProgressRing.IsActive = true;
-            }
-            else
-            {
-                this.loadingProgressRing.IsActive = false;
-            }
+            LoadingProgressRing.IsActive = active;
             double size = Window.Current.Bounds.Height;
             if (Window.Current.Bounds.Height > Window.Current.Bounds.Width)
             {
                 size = Window.Current.Bounds.Width;
             }
-            this.loadingProgressRing.Height = size;
-            this.loadingProgressRing.Width = size;
+            LoadingProgressRing.Height = size;
+            LoadingProgressRing.Width = size;
         }
         
 
-        public async Task<TeamerTask> loadTaskFromTask(TeamerTask task)
+        public async Task<TeamerTask> LoadTaskFromTask(TeamerTask task)
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             var uri = new Uri(task.Link);
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.AllowAutoRedirect = false;
-            handler.CookieContainer = new CookieContainer();
+            HttpClientHandler handler = new HttpClientHandler
+            {
+                CookieContainer = new CookieContainer(),
+                AllowAutoRedirect = false
+            };
             handler.CookieContainer.Add(uri, new Cookie("tmsid", localSettings.Values["tmsid"].ToString()));
             handler.CookieContainer.Add(uri, new Cookie("tma", localSettings.Values["tma"].ToString()));
             handler.CookieContainer.Add(uri, new Cookie("tmb", localSettings.Values["tmb"].ToString()));
@@ -116,17 +105,26 @@ namespace Teamer
             string stringResp = await response.Content.ReadAsStringAsync();
             HtmlDocument html = new HtmlDocument();
             html.LoadHtml(stringResp);
-            var tasknameNode = html.GetElementbyId("hbc");
            
             var comments = html.GetElementbyId("comments");
             string times = comments.ChildNodes[0].InnerText.Replace("\n", "").Replace("&mdash;", "-").TrimStart(' ').TrimEnd(' ');
             var body = html.DocumentNode.ChildNodes[2].ChildNodes[5];
             var commenttxt = body.ChildNodes[1].ChildNodes[13].InnerText.Replace("\n","").TrimStart(' ').TrimEnd(' ');
-            task.Description = commenttxt;
-            var start = times.Replace("Задание поставлено ", "").Replace(" пользователем","\tпользователем").Split('\t')[0];
-            var deadline = times.TrimEnd('.').Replace("Дедлайн - ", "Дедлайн -\t").Split('\t')[1];
-            task.Start = start;
-            task.Deadline = deadline;
+            if (commenttxt != null) task.Description = commenttxt;
+            string start = "";
+            if (times.Replace("Задание поставлено ", "").Replace(" пользователем","\tпользователем").Split('\t').Length > 0)
+            {
+                start = times.Replace("Задание поставлено ", "").Replace(" пользователем","\tпользователем").Split('\t')[0];
+                
+            }
+            string deadline = "";
+            if (times.TrimEnd('.').Replace("Дедлайн - ", "Дедлайн -\t").Split('\t').Length > 1)
+            {
+                deadline = times.TrimEnd('.').Replace("Дедлайн - ", "Дедлайн -\t").Split('\t')[1];
+
+            }
+            if (start != null) task.Start = start;
+            if (deadline != null) task.Deadline = deadline;
             httpClient.Dispose();
             return task;
         }

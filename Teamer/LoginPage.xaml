@@ -10,11 +10,11 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Border Margin="46,122,49,385" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid>
-                <TextBox x:Name="loginTextBox" HorizontalAlignment="Left" TextWrapping="Wrap" PlaceholderText="Логин" VerticalAlignment="Top" Width="127"/>
-                <PasswordBox x:Name="passwordBox" HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top" Width="127" PlaceholderText="Пароль"/>
-                <CheckBox x:Name="rememberCheckBox" Content="WITNESS ME" HorizontalAlignment="Left" Margin="0,69,0,0" VerticalAlignment="Top" Width="127"/>
-                <Button x:Name="loginButton" Content="Поехали, Ганс!" HorizontalAlignment="Left" Margin="0,101,0,0" VerticalAlignment="Top" Width="127" Click="loginButton_Click"/>
-                <ProgressRing x:Name="authProgressRing" HorizontalAlignment="Left" Margin="132,0,0,0" VerticalAlignment="Top" Height="133" Width="133"/>
+                <TextBox x:Name="LoginTextBox" HorizontalAlignment="Left" TextWrapping="Wrap" PlaceholderText="Логин" VerticalAlignment="Top" Width="127"/>
+                <PasswordBox x:Name="PasswordBox" HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top" Width="127" PlaceholderText="Пароль"/>
+                <CheckBox x:Name="RememberCheckBox" Content="WITNESS ME" HorizontalAlignment="Left" Margin="0,69,0,0" VerticalAlignment="Top" Width="127"/>
+                <Button x:Name="LoginButton" Content="Поехали, Ганс!" HorizontalAlignment="Left" Margin="0,101,0,0" VerticalAlignment="Top" Width="127" Click="loginButton_Click"/>
+                <ProgressRing x:Name="AuthProgressRing" HorizontalAlignment="Left" Margin="132,0,0,0" VerticalAlignment="Top" Height="133" Width="133"/>
 
             </Grid>
         </Border>

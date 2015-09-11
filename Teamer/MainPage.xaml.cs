@@ -1,26 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Data.Xml.Dom;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-
 using HtmlAgilityPack;
-using Windows.UI;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -85,7 +73,7 @@ namespace Teamer
             Debug.WriteLine("Beep");
 
         }
-        public void addMoreFromHtml(HtmlDocument doc)
+        public void AddMoreFromHtml(HtmlDocument doc)
         {
 
         }
@@ -96,7 +84,7 @@ namespace Teamer
     {
         public string Name, Id;
         public List<TeamerTask> Tasks;
-        public void addTask(TeamerTask task)
+        public void AddTask(TeamerTask task)
         {
             if (Tasks == null)
             {
@@ -105,15 +93,16 @@ namespace Teamer
             task.ParentProject = this;
             Tasks.Add(task);
         }
-        public void addTask(string text, string id)
+        public void AddTask(string text, string id)
         {
             if (Tasks == null)
             {
                 Tasks = new List<TeamerTask>();
             }
             TeamerTask task = new TeamerTask(text, id, this);
+            Tasks.Add(task);
         }
-        public void removeTask(string id)
+        public void RemoveTask(string id)
         {
             foreach(TeamerTask task in Tasks)
             {
@@ -140,44 +129,46 @@ namespace Teamer
             if (node.ChildNodes.Count >= 6)
             {
                 
-                foreach(HtmlNode taskHTML in node.ChildNodes[3].ChildNodes)
+                foreach(HtmlNode taskHtml in node.ChildNodes[3].ChildNodes)
                 {
-                    if (taskHTML.Name == "tr")
+                    if (taskHtml.Name == "tr")
                     {
                         //tasklistHTML.Add(taskHTML);
-                        this.addTask(new TeamerTask(taskHTML));
+                        AddTask(new TeamerTask(taskHtml));
                     }
                 }
             }
             Debug.WriteLine("Boop");
         }
     }
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage
     {
         
         public MainPage()
         {
-            this.InitializeComponent();
-            updateUI();
+            InitializeComponent();
+            UpdateUi();
         }
 
         
 
-        public async void updateUI()
+        public async void UpdateUi()
         {
-            List<TeamerProject> result = await loadContent();
+            List<TeamerProject> result = await LoadContent();
             if (result!=null)
             {
-                showContent(result);
+                ShowContent(result);
             }
         }
-        public async Task<List<TeamerProject>> loadContent()
+        public async Task<List<TeamerProject>> LoadContent()
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             var uri = new Uri("http://www.teamer.ru/");
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.AllowAutoRedirect = false;
-            handler.CookieContainer = new CookieContainer();
+            HttpClientHandler handler = new HttpClientHandler
+            {
+                AllowAutoRedirect = false,
+                CookieContainer = new CookieContainer()
+            };
             handler.CookieContainer.Add(uri, new Cookie("tmsid", localSettings.Values["tmsid"].ToString()));
             handler.CookieContainer.Add(uri, new Cookie("tma", localSettings.Values["tma"].ToString()));
             handler.CookieContainer.Add(uri, new Cookie("tmb", localSettings.Values["tmb"].ToString()));
@@ -196,7 +187,6 @@ namespace Teamer
             }
             httpClient.Dispose();
             var projectsNodes = html.GetElementbyId("w").ChildNodes;
-            List<HtmlNode> projects = new List<HtmlNode>();
             List<TeamerProject> teamerprojects = new List<TeamerProject>();
             foreach(HtmlNode node in projectsNodes)
             {
@@ -210,13 +200,15 @@ namespace Teamer
             //Debug.WriteLine("hey!");
             return teamerprojects;
         }
-        public async Task<HtmlDocument> getLinkAsync(string link)
+        public async Task<HtmlDocument> GetLinkAsync(string link)
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             var uri = new Uri(link);
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.AllowAutoRedirect = false;
-            handler.CookieContainer = new CookieContainer();
+            HttpClientHandler handler = new HttpClientHandler
+            {
+                AllowAutoRedirect = false,
+                CookieContainer = new CookieContainer()
+            };
             handler.CookieContainer.Add(uri, new Cookie("tmsid", localSettings.Values["tmsid"].ToString()));
             handler.CookieContainer.Add(uri, new Cookie("tma", localSettings.Values["tma"].ToString()));
             handler.CookieContainer.Add(uri, new Cookie("tmb", localSettings.Values["tmb"].ToString()));
@@ -229,42 +221,44 @@ namespace Teamer
             html.LoadHtml(stringResp);
             return html;
         }
-        public void showContent(List<TeamerProject> content)
+        public void ShowContent(List<TeamerProject> content)
         {
             foreach(TeamerProject project in content)
             {
                 if (project.Tasks!=null)
                 {
                     var panel = FindNameInSubtree<ListView>(this, "taskListView");
-                    ListViewHeaderItem headerItem = new ListViewHeaderItem();
-                    headerItem.Content = project.Name;
-                    //headerItem.Tapped += headerItem_Tapped;
-                    panel.Items.Add(headerItem);
-                    foreach(TeamerTask task in project.Tasks)
+                    ListViewHeaderItem headerItem = new ListViewHeaderItem {Content = project.Name};
+                    headerItem.Tapped += headerItem_Tapped;
+                    if (panel.Items != null)
                     {
-                        TextBlock textBlock = new TextBlock();
-                        textBlock.Text = task.Text;
-                        textBlock.Tag = task;
-                        textBlock.IsTapEnabled = true;
-                        textBlock.Tapped += textBlock_Tapped;
-                        panel.Items.Add(textBlock);
+                        panel.Items.Add(headerItem);
+                        foreach(TeamerTask task in project.Tasks)
+                        {
+                            TextBlock textBlock = new TextBlock
+                            {
+                                Text = task.Text,
+                                Tag = task,
+                                IsTapEnabled = true
+                            };
+                            textBlock.Tapped += textBlock_Tapped;
+                            panel.Items.Add(textBlock);
+                        }
                     }
-                    
                 }
             }
         }
         private void headerItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            var headerItem = sender as ListViewHeaderItem;
-            Frame rootFrame = Window.Current.Content as Frame;
-
-            rootFrame.Navigate(typeof(TaskPage),(headerItem.Tag as TeamerTask).Link);
+            
         }
         private void textBlock_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            if (sender == null) throw new ArgumentNullException(nameof(sender));
             var textBlock = sender as TextBlock;
             Frame rootFrame = Window.Current.Content as Frame;
-            rootFrame.Navigate(typeof(TaskPage), textBlock.Tag as TeamerTask);
+            if (rootFrame != null)
+                if (textBlock != null) rootFrame.Navigate(typeof(TaskPage), textBlock.Tag as TeamerTask);
             //XmlDocument doc = new XmlDocument();
             //var doc = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
             //XmlNodeList toastTextElements = doc.GetElementsByTagName("text");
