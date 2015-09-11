@@ -1,0 +1,23 @@
+﻿<Page
+    x:Class="Teamer.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Teamer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Border Margin="46,122,49,385" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid>
+                <TextBox x:Name="loginTextBox" HorizontalAlignment="Left" TextWrapping="Wrap" PlaceholderText="Логин" VerticalAlignment="Top" Width="127"/>
+                <PasswordBox x:Name="passwordBox" HorizontalAlignment="Left" Margin="0,37,0,0" VerticalAlignment="Top" Width="127" PlaceholderText="Пароль"/>
+                <CheckBox x:Name="rememberCheckBox" Content="WITNESS ME" HorizontalAlignment="Left" Margin="0,69,0,0" VerticalAlignment="Top" Width="127"/>
+                <Button x:Name="loginButton" Content="Поехали, Ганс!" HorizontalAlignment="Left" Margin="0,101,0,0" VerticalAlignment="Top" Width="127" Click="loginButton_Click"/>
+                <ProgressRing x:Name="authProgressRing" HorizontalAlignment="Left" Margin="132,0,0,0" VerticalAlignment="Top" Height="133" Width="133"/>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+</Page>
